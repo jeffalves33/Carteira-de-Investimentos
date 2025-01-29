@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira de Investimentos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Carteira - Jeferson</h1>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <select id="mesSelect" class="form-control">
+                    <option value="0">Janeiro</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <h4>Rendimento do mês: <span id="rendimentoMes"></span></h4>
+            </div>
+        </div>
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th>Ativo</th>
+                    <th>% na Carteira</th>
+                    <th>Investido em</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaInvestimentos">
+                <!-- Dados serão preenchidos aqui -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const dados = [
+            {
+                "mês": "janeiro",
+                "ações": [
+                    {
+                        "nome": "Bitcoin",
+                        "sigla": "BTC",
+                        "porcentagem": "100%",
+                        "plataforma": "Binance"
+                    }
+                ],
+                "rendimento": ""
+            }
+        ];
+
+        function carregarDados(mesIndex) {
+            const mes = dados[mesIndex];
+            const tabela = document.getElementById('tabelaInvestimentos');
+            const rendimentoMes = document.getElementById('rendimentoMes');
+
+            tabela.innerHTML = '';
+            rendimentoMes.textContent = mes.rendimento;
+
+            mes.ações.forEach(acao => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${acao.nome} (${acao.sigla})</td>
+                    <td>${acao.porcentagem}</td>
+                    <td>${acao.plataforma}</td>
+                `;
+                tabela.appendChild(row);
+            });
+        }
+
+        document.getElementById('mesSelect').addEventListener('change', function() {
+            carregarDados(this.value);
+        });
+
+        // Carregar dados iniciais
+        carregarDados(0);
+    </script>
+</body>
+</html>
