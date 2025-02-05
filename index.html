@@ -12,6 +12,7 @@
         <div class="row mt-4">
             <div class="col-md-6">
                 <select id="mesSelect" class="form-control">
+                    <option value="1">Fevereiro</option>
                     <option value="0">Janeiro</option>
                 </select>
             </div>
@@ -28,7 +29,6 @@
                 </tr>
             </thead>
             <tbody id="tabelaInvestimentos">
-                <!-- Dados serão preenchidos aqui -->
             </tbody>
         </table>
     </div>
@@ -39,13 +39,27 @@
                 "mês": "janeiro",
                 "ações": [
                     {
+                        "nome": "-",
+                        "sigla": "-",
+                        "porcentagem": "0%",
+                        "plataforma": "-",
+                        "valor": 0
+                    }
+                ],
+                "rendimento": 0
+            },
+            {
+                "mês": "fevereiro",
+                "ações": [
+                    {
                         "nome": "Bitcoin",
                         "sigla": "BTC",
                         "porcentagem": "100%",
-                        "plataforma": "Binance"
+                        "plataforma": "Binance",
+                        "valor": 58.74
                     }
                 ],
-                "rendimento": ""
+                "rendimento": "-"
             }
         ];
 
@@ -60,7 +74,10 @@
             mes.ações.forEach(acao => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${acao.nome} (${acao.sigla})</td>
+                    <td>
+                        <img src="img/${acao.nome}.png" width=30px alt="${acao.nome}"> 
+                        ${acao.nome} (${acao.sigla})
+                    </td>
                     <td>${acao.porcentagem}</td>
                     <td>${acao.plataforma}</td>
                 `;
@@ -72,8 +89,7 @@
             carregarDados(this.value);
         });
 
-        // Carregar dados iniciais
-        carregarDados(0);
+        carregarDados(1);
     </script>
 </body>
 </html>
