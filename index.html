@@ -4,92 +4,671 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carteira de Investimentos</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3a5a97;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+            --text-color: #333;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #2a4171);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .stats-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .positive {
+            color: var(--success-color);
+        }
+        
+        .negative {
+            color: var(--danger-color);
+        }
+        
+        .table th {
+            background-color: rgba(58, 90, 151, 0.1);
+        }
+        
+        .asset-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #e9ecef;
+            padding: 2px;
+        }
+        
+        .asset-name {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .asset-sigla {
+            font-size: 0.8rem;
+            color: #6c757d;
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            width: 100%;
+        }
+        
+        .chart-wrapper {
+            padding: 10px;
+        }
+        
+        .month-navigator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .month-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        .month-btn:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .asset-platform {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            background-color: #e9ecef;
+        }
+        
+        .asset-value {
+            font-weight: bold;
+        }
+        
+        .filters {
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Carteira - Jeferson</h1>
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <select id="mesSelect" class="form-control">
-                    <option value="1">Fevereiro</option>
-                    <option value="0">Janeiro</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <h4>Rendimento do mês: <span id="rendimentoMes"></span></h4>
+    <div class="dashboard-container">
+        <div class="header animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-chart-line me-2"></i>Carteira de Investimentos</h1>
+                    <p class="lead mb-0">Olá, Jeferson! Acompanhe seus investimentos e rendimentos.</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="me-3">
+                            <span class="d-block">Patrimônio Total</span>
+                            <span class="stats-value" id="patrimonioTotal">R$ 0,00</span>
+                        </div>
+                        <button class="btn btn-light" id="darkModeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-        <table class="table mt-4">
-            <thead>
-                <tr>
-                    <th>Ativo</th>
-                    <th>% na Carteira</th>
-                    <th>Investido em</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaInvestimentos">
-            </tbody>
-        </table>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card animate__animated animate__fadeInLeft">
+                    <div class="card-header">
+                        <i class="fas fa-wallet me-2"></i>Resumo
+                    </div>
+                    <div class="card-body">
+                        <div class="month-navigator">
+                            <button class="month-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <h5 id="currentMonth">Carregando...</h5>
+                            <button class="month-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="stats-card">
+                            <span>Rendimento do Mês</span>
+                            <div class="stats-value" id="rendimentoMes">-</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6 stats-card">
+                                <span>Total Investido</span>
+                                <div class="stats-value" id="totalInvestido">R$ 0,00</div>
+                            </div>
+                            <div class="col-6 stats-card">
+                                <span>Ativos</span>
+                                <div class="stats-value" id="totalAtivos">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie me-2"></i>Distribuição
+                    </div>
+                    <div class="card-body chart-wrapper">
+                        <div class="chart-container">
+                            <canvas id="distribuicaoGrafico"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card animate__animated animate__fadeInRight">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-table me-2"></i>Detalhes dos Ativos</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="mostrarValores">
+                                <label class="form-check-label" for="mostrarValores">Mostrar Valores</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="filters">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="pesquisaAtivo" placeholder="Buscar ativo...">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Filtrar por</span>
+                                        <select class="form-select" id="filtrarTipo">
+                                            <option value="todos">Todos os tipos</option>
+                                            <option value="Ação">Ações</option>
+                                            <option value="FIIS">FIIs</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ativo</th>
+                                        <th>% na Carteira</th>
+                                        <th>Plataforma</th>
+                                        <th>Valor Atual</th>
+                                        <th>Distribuição</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaInvestimentos">
+                                    <tr>
+                                        <td colspan="5" class="text-center">Carregando dados...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card animate__animated animate__fadeInRight" style="animation-delay: 0.3s">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line me-2"></i>Evolução do Patrimônio
+                    </div>
+                    <div class="card-body chart-wrapper">
+                        <div class="chart-container">
+                            <canvas id="evolucaoGrafico"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center text-muted">
+            <small>Atualizado automaticamente. Última atualização: <span id="ultimaAtualizacao"></span></small>
+        </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
+        // Dados da carteira - poderia vir de uma API ou localStorage
         const dados = [
             {
-                "mês": "janeiro",
+                "mês": "Março",
                 "ações": [
                     {
-                        "nome": "-",
-                        "sigla": "-",
-                        "porcentagem": "0%",
-                        "plataforma": "-",
-                        "valor": 0
+                        "nome": "VGIR11",
+                        "sigla": "FIIS",
+                        "porcentagem": 100,
+                        "plataforma": "Rico",
+                        "valor": 9.31,
+                        "quantidade": 10,
+                        "cor": "#4b86c2"
                     }
                 ],
-                "rendimento": 0
+                "rendimento": 3.54,
+                "totalInvestido": 9.31
             },
             {
-                "mês": "fevereiro",
+                "mês": "Abril",
                 "ações": [
                     {
-                        "nome": "Bitcoin",
-                        "sigla": "BTC",
-                        "porcentagem": "100%",
-                        "plataforma": "Binance",
-                        "valor": 58.74
+                        "nome": "AZZA3",
+                        "sigla": "Ação",
+                        "porcentagem": 71.78,
+                        "plataforma": "Rico",
+                        "valor": 24.20,
+                        "quantidade": 12,
+                        "cor": "#e7711b"
+                    },
+                    {
+                        "nome": "VGIR11",
+                        "sigla": "FIIS",
+                        "porcentagem": 28.21,
+                        "plataforma": "Rico",
+                        "valor": 9.51,
+                        "quantidade": 12,
+                        "cor": "#4b86c2"
                     }
                 ],
-                "rendimento": "-"
+                "rendimento": null,
+                "totalInvestido": 404.52
             }
         ];
 
+        // Gerar dados históricos para demonstração
+        function gerarDadosHistoricos() {
+            // Vamos adicionar alguns meses anteriores para demonstração
+            const mesesAnteriores = [];
+            const dadosCompletos = [...dados];
+            
+            // Criar dados fictícios para os meses anteriores
+            mesesAnteriores.forEach((mes, index) => {
+                const valorBase = 85 + index * 5;
+                dadosCompletos.unshift({
+                    "mês": mes,
+                    "ações": [
+                        {
+                            "nome": "VGIR11",
+                            "sigla": "FIIS",
+                            "porcentagem": 100,
+                            "plataforma": "Rico",
+                            "valor": valorBase / 10,
+                            "quantidade": 10,
+                            "cor": "#4b86c2"
+                        }
+                    ],
+                    "rendimento": 2 + Math.random() * 2,
+                    "totalInvestido": valorBase
+                });
+            });
+            
+            return dadosCompletos;
+        }
+
+        // Dados estendidos para demonstração
+        const dadosCompletos = gerarDadosHistoricos();
+        
+        // Variáveis globais
+        let mesAtualIndex = dadosCompletos.length - 1;
+        let mostrarValores = false;
+        let graficoDistribuicao = null;
+        let graficoEvolucao = null;
+        
+        // Função para formatar valor em moeda brasileira
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+        
+        // Função para formatar percentual
+        function formatarPercentual(valor) {
+            if (valor === null || valor === undefined) return "-";
+            return valor.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + "%";
+        }
+        
+        // Função para criar o gráfico de distribuição
+        function criarGraficoDistribuicao(mesIndex) {
+            const mes = dadosCompletos[mesIndex];
+            const ctx = document.getElementById('distribuicaoGrafico').getContext('2d');
+            
+            const labels = mes.ações.map(acao => acao.nome);
+            const data = mes.ações.map(acao => acao.porcentagem);
+            const backgroundColor = mes.ações.map(acao => acao.cor);
+            
+            if (graficoDistribuicao) {
+                graficoDistribuicao.destroy();
+            }
+            
+            graficoDistribuicao = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para criar o gráfico de evolução
+        function criarGraficoEvolucao() {
+            const ctx = document.getElementById('evolucaoGrafico').getContext('2d');
+            
+            const labels = dadosCompletos.map(item => item.mês);
+            const data = dadosCompletos.map(item => {
+                return item.ações.reduce((total, acao) => total + acao.valor, 0);
+            });
+            
+            if (graficoEvolucao) {
+                graficoEvolucao.destroy();
+            }
+            
+            graficoEvolucao = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Patrimônio Total',
+                        data: data,
+                        backgroundColor: 'rgba(58, 90, 151, 0.2)',
+                        borderColor: 'rgba(58, 90, 151, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatarMoeda(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${formatarMoeda(value)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para carregar os dados do mês selecionado
         function carregarDados(mesIndex) {
-            const mes = dados[mesIndex];
+            const mes = dadosCompletos[mesIndex];
             const tabela = document.getElementById('tabelaInvestimentos');
             const rendimentoMes = document.getElementById('rendimentoMes');
+            const currentMonth = document.getElementById('currentMonth');
+            const totalInvestido = document.getElementById('totalInvestido');
+            const totalAtivos = document.getElementById('totalAtivos');
+            const patrimonioTotal = document.getElementById('patrimonioTotal');
+            
+            // Atualizar botões de navegação
+            document.getElementById('prevMonth').disabled = mesIndex === 0;
+            document.getElementById('nextMonth').disabled = mesIndex === dadosCompletos.length - 1;
 
+            // Atualizar cabeçalho e resumo
+            currentMonth.textContent = mes.mês;
+            rendimentoMes.textContent = mes.rendimento === null ? '-' : formatarPercentual(mes.rendimento);
+            rendimentoMes.className = 'stats-value';
+            if (mes.rendimento !== null) {
+                rendimentoMes.classList.add(mes.rendimento >= 0 ? 'positive' : 'negative');
+            }
+
+            totalInvestido.textContent = formatarMoeda(mes.totalInvestido);
+            totalAtivos.textContent = mes.ações.length;
+            // Calcular o total investido como a soma dos valores dos ativos
+            const valorTotal = mes.ações.reduce((total, acao) => total + acao.valor, 0);
+            totalInvestido.textContent = formatarMoeda(valorTotal);
+            totalAtivos.textContent = mes.ações.length;
+            patrimonioTotal.textContent = formatarMoeda(valorTotal); // Usar o mesmo valor calculado
+            
+            // Limpar tabela
             tabela.innerHTML = '';
-            rendimentoMes.textContent = mes.rendimento;
-
+            
+            // Cor base para a barra de progresso
+            const corBase = "bg-primary";
+            
+            // Preencher tabela
             mes.ações.forEach(acao => {
                 const row = document.createElement('tr');
+                
+                // Calcular valor total do ativo
+                const valorTotal = acao.valor * acao.quantidade;
+                
                 row.innerHTML = `
-                    <td>
-                        <img src="img/${acao.nome}.png" width=30px alt="${acao.nome}"> 
-                        ${acao.nome} (${acao.sigla})
+                    <td class="asset-name">
+                        <div class="d-flex align-items-center">
+                            <div class="asset-icon d-flex align-items-center justify-content-center">
+                                <i class="${acao.sigla === 'FIIS' ? 'fas fa-building' : 'fas fa-chart-line'}"></i>
+                            </div>
+                            <div>
+                                ${acao.nome}
+                                <span class="asset-sigla">${acao.sigla}</span>
+                            </div>
+                        </div>
                     </td>
-                    <td>${acao.porcentagem}</td>
-                    <td>${acao.plataforma}</td>
+                    <td>${formatarPercentual(acao.porcentagem)}</td>
+                    <td><span class="asset-platform">${acao.plataforma}</span></td>
+                    <td class="asset-value">${mostrarValores ? formatarMoeda(acao.valor) : '••••••'}</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar ${corBase}" role="progressbar" 
+                                style="width: ${acao.porcentagem}%; background-color: ${acao.cor};" 
+                                aria-valuenow="${acao.porcentagem}" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </td>
                 `;
                 tabela.appendChild(row);
             });
+            
+            // Atualizar gráficos
+            criarGraficoDistribuicao(mesIndex);
+            
+            // Atualizar data da última atualização
+            document.getElementById('ultimaAtualizacao').textContent = new Date().toLocaleString('pt-BR');
         }
-
-        document.getElementById('mesSelect').addEventListener('change', function() {
-            carregarDados(this.value);
+        
+        // Filtrar ativos
+        function filtrarAtivos() {
+            const termoBusca = document.getElementById('pesquisaAtivo').value.toLowerCase();
+            const tipoFiltro = document.getElementById('filtrarTipo').value;
+            const tabela = document.getElementById('tabelaInvestimentos');
+            const mes = dadosCompletos[mesAtualIndex];
+            
+            // Limpar tabela
+            tabela.innerHTML = '';
+            
+            // Filtrar ações
+            const acoesFiltradas = mes.ações.filter(acao => {
+                const nomeBate = acao.nome.toLowerCase().includes(termoBusca);
+                const tipoBate = tipoFiltro === 'todos' || acao.sigla === tipoFiltro;
+                return nomeBate && tipoBate;
+            });
+            
+            // Preencher tabela com resultados filtrados
+            if (acoesFiltradas.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5" class="text-center">Nenhum ativo encontrado</td>`;
+                tabela.appendChild(row);
+            } else {
+                acoesFiltradas.forEach(acao => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="asset-name">
+                            <div class="d-flex align-items-center">
+                                <div class="asset-icon d-flex align-items-center justify-content-center">
+                                    <i class="${acao.sigla === 'FIIS' ? 'fas fa-building' : 'fas fa-chart-line'}"></i>
+                                </div>
+                                <div>
+                                    ${acao.nome}
+                                    <span class="asset-sigla">${acao.sigla}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${formatarPercentual(acao.porcentagem)}</td>
+                        <td><span class="asset-platform">${acao.plataforma}</span></td>
+                        <td class="asset-value">${mostrarValores ? formatarMoeda(acao.valor) : '••••••'}</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                    style="width: ${acao.porcentagem}%; background-color: ${acao.cor};" 
+                                    aria-valuenow="${acao.porcentagem}" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                    tabela.appendChild(row);
+                });
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar com o mês mais recente
+            carregarDados(mesAtualIndex);
+            criarGraficoEvolucao();
+            
+            // Botões de navegação
+            document.getElementById('prevMonth').addEventListener('click', function() {
+                if (mesAtualIndex > 0) {
+                    mesAtualIndex--;
+                    carregarDados(mesAtualIndex);
+                }
+            });
+            
+            document.getElementById('nextMonth').addEventListener('click', function() {
+                if (mesAtualIndex < dadosCompletos.length - 1) {
+                    mesAtualIndex++;
+                    carregarDados(mesAtualIndex);
+                }
+            });
+            
+            // Toggle para mostrar valores
+            document.getElementById('mostrarValores').addEventListener('change', function() {
+                mostrarValores = this.checked;
+                carregarDados(mesAtualIndex);
+            });
+            
+            // Filtros
+            document.getElementById('pesquisaAtivo').addEventListener('input', filtrarAtivos);
+            document.getElementById('filtrarTipo').addEventListener('change', filtrarAtivos);
+            
+            // Modo escuro
+            document.getElementById('darkModeToggle').addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('fa-moon')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
         });
-
-        carregarDados(1);
     </script>
 </body>
 </html>
