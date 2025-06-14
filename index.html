@@ -54,11 +54,11 @@
 
         .stats-card {
             text-align: center;
-            padding: 15px;
+            padding: 12px;
         }
 
         .stats-value {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
         }
 
@@ -154,18 +154,9 @@
     <div class="container-fluid">
         <div class="header animate__animated animate__fadeIn">
             <div class="row align-items-center">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <h1><i class="fas fa-chart-line me-2"></i>Carteira de Investimentos</h1>
-                    <p class="lead mb-0">Olá! Acompanhe seus investimentos e rendimentos.</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <div class="d-flex justify-content-end align-items-center">
-                        <div class="me-3">
-                            <span class="d-block">Patrimônio Total</span>
-                            <span class="stats-value" id="patrimonioTotal">R$ 0,00</span>
-                        </div>
-                        <button class="btn btn-light" id="darkModeToggle"><i class="fas fa-moon"></i></button>
-                    </div>
+                    <p class="lead mb-0">Acompanhe seus investimentos e rendimentos.</p>
                 </div>
             </div>
         </div>
@@ -185,25 +176,41 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-6 stats-card">
+                            <div class="col-5 stats-card">
                                 <span>Total Investido</span>
                                 <div class="stats-value" id="totalInvestido">R$ 0,00</div>
                             </div>
-                            <div class="col-6 stats-card">
+                            <div class="col-5 stats-card">
+                                <span>Atual</span>
+                                <div class="stats-value" id="totalInvestidoAtual">R$ 0,00</div>
+                            </div>
+                            <div class="col-2 stats-card">
                                 <span>Ativos</span>
                                 <div class="stats-value" id="totalAtivos">0</div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-4">
                 <div class="card animate__animated animate__fadeInLeft" style="animation-delay:0.2s">
-                    <div class="card-header"><i class="fas fa-chart-pie me-2"></i>Distribuição</div>
+                    <div class="card-header"><i class="fas fa-chart-pie me-2"></i>Distribuição Atual</div>
                     <div class="card-body chart-wrapper">
-                        <div class="chart-container"><canvas id="distribuicaoGrafico"></canvas></div>
+                        <div class="chart-container"><canvas id="distribuicaoAtualGrafico"></canvas></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-4">
+                <div class="card animate__animated animate__fadeInLeft" style="animation-delay:0.2s">
+                    <div class="card-header"><i class="fas fa-chart-pie me-2"></i>Distribuição Ideal</div>
+                    <div class="card-body chart-wrapper">
+                        <div class="chart-container"><canvas id="distribuicaoIdealGrafico"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
                 <div class="card animate__animated animate__fadeInRight">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span><i class="fas fa-table me-2"></i>Detalhes dos Ativos</span>
@@ -254,9 +261,15 @@
                     </div>
                 </div>
                 <div class="card animate__animated animate__fadeInRight" style="animation-delay:0.3s">
-                    <div class="card-header"><i class="fas fa-chart-line me-2"></i>Evolução do Patrimônio</div>
+                    <div class="card-header"><i class="fas fa-chart-line me-2"></i>Evolução Patrimonial</div>
                     <div class="card-body chart-wrapper">
-                        <div class="chart-container"><canvas id="evolucaoGrafico"></canvas></div>
+                        <div class="chart-container"><canvas id="evolucaoGraficoPatrimonial"></canvas></div>
+                    </div>
+                </div>
+                <div class="card animate__animated animate__fadeInRight" style="animation-delay:0.3s">
+                    <div class="card-header"><i class="fas fa-chart-line me-2"></i>Evolução Rendimentos</div>
+                    <div class="card-body chart-wrapper">
+                        <div class="chart-container"><canvas id="evolucaoGraficoRendimentos"></canvas></div>
                     </div>
                 </div>
             </div>
@@ -268,30 +281,41 @@
     <script>
         const dadosBrutos = [
             {
-                mes: "Abril",
+                mes: "Junho",
                 investimento: 440.28,
                 acoes: [
-                    { nome: "BBAS3F", sigla: "Ação", plataforma: "Rico", precoCompra: 21.80, precoAtual: 21.80, quantidade: 1 },
-                    { nome: "BTHF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 8.57, precoAtual: 8.57, quantidade: 3 },
-                    { nome: "BTC", sigla: "CRIPT", plataforma: "Binance", precoCompra: 50, precoAtual: 50, quantidade: 1 },
-                    { nome: "IPCA50+6,98", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 57.91, precoAtual: 57.91, quantidade: 1 },
-                    { nome: "IPCA40+6,99", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 48.85, precoAtual: 48.85, quantidade: 1 },
-                    { nome: "HFOF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 6.02, precoAtual: 6.02, quantidade: 2 },
-                    { nome: "SAPR4F", sigla: "Ação", plataforma: "Rico", precoCompra: 6.60, precoAtual: 6.60, quantidade: 3 },
+                    { nome: "BBAS3F", sigla: "Ação", plataforma: "Rico", precoCompra: 21.80, precoAtual: 21.59, quantidade: 1 },
+                    { nome: "BTHF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 8.57, precoAtual: 8.56, quantidade: 3 },
+                    { nome: "BTC", sigla: "CRIPT", plataforma: "Binance", precoCompra: 50, precoAtual: 47.01, quantidade: 1 },
+                    { nome: "IPCA50+6,98", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 57.91, precoAtual: 55.95, quantidade: 1 },
+                    { nome: "IPCA40+6,99", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 48.85, precoAtual: 47.48, quantidade: 1 },
+                    { nome: "HFOF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 6.02, precoAtual: 5.88, quantidade: 2 },
+                    { nome: "SAPR4F", sigla: "Ação", plataforma: "Rico", precoCompra: 6.60, precoAtual: 7.06, quantidade: 3 },
                     { nome: "CDBINTER", sigla: "RFIXA", plataforma: "Inter", precoCompra: 39.36, precoAtual: 39.36, quantidade: 1 }
                 ]
             }
         ];
         let mesAtualIndex = dadosBrutos.length - 1;
         let mostrarValores = false;
-        let graficoDistribuicao, graficoEvolucao;
+        let graficoDistribuicaoAtual, graficoDistribuicaoIdeal, graficoEvolucaoPatrimonial, graficoEvolucaoRendimentos;
+        const coresPorSigla = {
+            'Ação': '#3a5a97',
+            'FIIS': '#28a745',
+            'CRIPT': '#ffc107',
+            'RFIXA': '#dc3545',
+            'DOLAR': '#2aded5'
+        };
+        function formatarMoeda(v) {
+            return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
 
-        function formatarMoeda(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
-        function formatarPercentual(v) { return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'; }
+        function formatarPercentual(v) {
+            return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+        }
 
-        function criarGraficoDistribuicao(idx) {
+        function criarGraficoPizzaDistribuicaoAtual(idx) {
             const mes = dadosBrutos[idx];
-            const ctx = document.getElementById('distribuicaoGrafico').getContext('2d');
+            const ctx = document.getElementById('distribuicaoAtualGrafico').getContext('2d');
 
             // Agrupar por sigla
             const agrupadoPorSigla = mes.acoes.reduce((acc, acao) => {
@@ -313,34 +337,90 @@
 
             const labels = Object.keys(agrupadoPorSigla);
             const data = Object.values(agrupadoPorSigla).map(item => item.porcentagem);
-
-            // Cores baseadas na sigla
-            const coresPorSigla = {
-                'Ação': '#3a5a97',
-                'FIIS': '#28a745',
-                'CRIPT': '#ffc107',
-                'RFIXA': '#dc3545'
-            };
-
             const colors = labels.map(sigla => coresPorSigla[sigla] || '#6c757d');
 
-            if (graficoDistribuicao) graficoDistribuicao.destroy();
-            graficoDistribuicao = new Chart(ctx, {
+            if (graficoDistribuicaoAtual) graficoDistribuicaoAtual.destroy();
+            graficoDistribuicaoAtual = new Chart(ctx, {
                 type: 'doughnut',
                 data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 1 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
         }
 
-        function criarGraficoEvolucao() {
-            const ctx = document.getElementById('evolucaoGrafico').getContext('2d');
+        function criarGraficoPizzaDistribuicaoIdeal(idx) {
+            const mes = dadosBrutos[idx];
+            const ctx = document.getElementById('distribuicaoIdealGrafico').getContext('2d');
+            const labels = ['Ação', 'FIIS', 'CRIPT', 'DOLAR', 'RFIXA'];
+            const data = [35, 25, 10, 20, 10];
+            const colors = labels.map(sigla => coresPorSigla[sigla] || '#6c757d');
+
+            if (graficoDistribuicaoIdeal) graficoDistribuicaoIdeal.destroy();
+            graficoDistribuicaoIdeal = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        function criarGraficoLinhaEvolucaoPatrimonial() {
+            const ctx = document.getElementById('evolucaoGraficoPatrimonial').getContext('2d');
             const labels = dadosBrutos.map(d => d.mes);
             const values = dadosBrutos.map(d => d.acoes.reduce((sum, a) => sum + a.precoAtual * a.quantidade, 0));
-            if (graficoEvolucao) graficoEvolucao.destroy();
-            graficoEvolucao = new Chart(ctx, {
+
+            if (graficoEvolucaoPatrimonial) graficoEvolucaoPatrimonial.destroy();
+            graficoEvolucaoPatrimonial = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets: [{ label: 'Patrimônio Atual', data: values, fill: true, tension: 0.3 }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: v => formatarMoeda(v) } } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: v => formatarMoeda(v) }
+                        }
+                    }
+                }
+            });
+        }
+
+        function criarGraficoLinhaEvolucaoRendimentos() {
+            const ctx = document.getElementById('evolucaoGraficoRendimentos').getContext('2d');
+            const labels = dadosBrutos.map(d => d.mes);
+            const values = dadosBrutos.map(d => {
+                const totalInvestido = d.acoes.reduce((sum, a) => sum + a.precoCompra * a.quantidade, 0);
+                const totalAtual = d.acoes.reduce((sum, a) => sum + a.precoAtual * a.quantidade, 0);
+                return totalAtual - totalInvestido; // Rendimento real (lucro/prejuízo)
+            });
+
+            // Determinar cor baseada no valor total acumulado
+            const totalRendimento = values[values.length - 1]; // Último valor (mais atual)
+            const cor = totalRendimento >= 0 ? '#28a745' : '#dc3545'; // Verde se positivo, vermelho se negativo
+
+            if (graficoEvolucaoRendimentos) graficoEvolucaoRendimentos.destroy();
+            graficoEvolucaoRendimentos = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Rendimento Real',
+                        data: values,
+                        borderColor: cor,
+                        backgroundColor: cor + '20', // Cor com transparência para o preenchimento
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: v => formatarMoeda(v) }
+                        }
+                    }
+                }
             });
         }
 
@@ -350,37 +430,61 @@
             document.getElementById('nextMonth').disabled = idx === dadosBrutos.length - 1;
             document.getElementById('currentMonth').textContent = mes.mes;
 
-            const totalInvestido = mes.acoes.reduce((total, acao) => total + (acao.precoAtual * acao.quantidade), 0);
+            // Corrigir o cálculo do total investido
+            const totalInvestido = mes.acoes.reduce((total, acao) => total + (acao.precoCompra * acao.quantidade), 0);
             const totalAtual = mes.acoes.reduce((sum, a) => sum + a.precoAtual * a.quantidade, 0);
+
+            // Calcular porcentagem de cada ação em relação ao patrimônio total atual
             mes.acoes.forEach(acao => {
                 acao.porcentagem = ((acao.precoAtual * acao.quantidade) / totalAtual) * 100;
             });
-            const rendimento = totalInvestido > 0 ? (totalAtual - totalInvestido) / totalInvestido * 100 : 0;
+
+            const rendimento = totalInvestido > 0 ? ((totalAtual - totalInvestido) / totalInvestido) * 100 : 0;
 
             const rendEl = document.getElementById('rendimentoMes');
             rendEl.textContent = formatarPercentual(rendimento);
             rendEl.className = 'stats-value ' + (rendimento >= 0 ? 'positive' : 'negative');
 
             document.getElementById('totalInvestido').textContent = formatarMoeda(totalInvestido);
+            document.getElementById('totalInvestidoAtual').textContent = formatarMoeda(totalAtual);
             document.getElementById('totalAtivos').textContent = mes.acoes.length;
-            document.getElementById('patrimonioTotal').textContent = formatarMoeda(totalAtual);
 
             const tbody = document.getElementById('tabelaInvestimentos');
             tbody.innerHTML = '';
+
             mes.acoes.forEach(a => {
-                const currentValue = a.precoAtual * a.quantidade;
+                const valorInvestido = a.precoCompra * a.quantidade;
+                const valorAtual = a.precoAtual * a.quantidade;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                <td class="asset-name"><div class="d-flex align-items-center"><div class="asset-icon"><i class="${a.sigla === 'FIIS' ? 'fas fa-building' : (a.sigla === 'CRIPT') ? 'fa-solid fa-bitcoin-sign' : (a.sigla === 'RFIXA') ? 'fa-solid fa-money-bill' : 'fa-solid fa-chart-line'}"></i></div><div>${a.nome}<span class="asset-sigla">${a.sigla}</span></div></div></td>
-                <td class="asset-value ${currentValue >= a.precoCompra * a.quantidade ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(currentValue) : '••••••'}</td>
-                <td class="asset-value ${currentValue >= a.precoAtual * a.quantidade ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(currentValue) : '••••••'}</td>
+                <td class="asset-name">
+                    <div class="d-flex align-items-center">
+                        <div class="asset-icon">
+                            <i class="${a.sigla === 'FIIS' ? 'fas fa-building' :
+                            (a.sigla === 'CRIPT') ? 'fa-solid fa-bitcoin-sign' :
+                                (a.sigla === 'RFIXA') ? 'fa-solid fa-money-bill' :
+                                    'fa-solid fa-chart-line'}"></i>
+                        </div>
+                        <div>${a.nome}<span class="asset-sigla">${a.sigla}</span></div>
+                    </div>
+                </td>
+                <td class="asset-value">${mostrarValores ? formatarMoeda(valorInvestido) : '••••••'}</td>
+                <td class="asset-value ${valorAtual >= valorInvestido ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(valorAtual) : '••••••'}</td>
                 <td><span class="asset-platform">${a.plataforma}</span></td>
-                <td><div class="progress"><div class="progress-bar" role="progressbar" style="width:${a.porcentagem}%; height: 100%" aria-valuenow="${a.porcentagem}" aria-valuemin="0" aria-valuemax="100">${a.porcentagem.toFixed(2)}</div></div></td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width:${a.porcentagem}%; height: 100%" 
+                            aria-valuenow="${a.porcentagem}" aria-valuemin="0" aria-valuemax="100">
+                            ${a.porcentagem.toFixed(2)}%
+                        </div>
+                    </div>
+                </td>
             `;
                 tbody.appendChild(tr);
             });
 
-            criarGraficoDistribuicao(idx);
+            criarGraficoPizzaDistribuicaoAtual(idx);
+            criarGraficoPizzaDistribuicaoIdeal(idx);
             document.getElementById('ultimaAtualizacao').textContent = new Date().toLocaleString('pt-BR');
         }
 
@@ -388,32 +492,62 @@
             const termo = document.getElementById('pesquisaAtivo').value.toLowerCase();
             const tipo = document.getElementById('filtrarTipo').value;
             const mes = dadosBrutos[mesAtualIndex];
-            const tbody = document.getElementById('tabelaInvestimentos'); tbody.innerHTML = '';
-            const lista = mes.acoes.filter(a => a.nome.toLowerCase().includes(termo) && (tipo === 'todos' || a.sigla === tipo));
-            if (lista.length === 0) tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum ativo encontrado</td></tr>';
-            else lista.forEach(a => {
-                const current = a.precoAtual * a.quantidade;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                <td class="asset-name"><div class="d-flex align-items-center"><div class="asset-icon"><i class="${a.sigla === 'FIIS' ? 'fas fa-building' : 'fas fa-chart-line'}"></i></div><div>${a.nome}<span class="asset-sigla">${a.sigla}</span></div></div></td>
-                <td>${formatarPercentual(a.porcentagem)}</td>
+            const tbody = document.getElementById('tabelaInvestimentos');
+            tbody.innerHTML = '';
+
+            const lista = mes.acoes.filter(a =>
+                a.nome.toLowerCase().includes(termo) &&
+                (tipo === 'todos' || a.sigla === tipo)
+            );
+
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum ativo encontrado</td></tr>';
+            } else {
+                lista.forEach(a => {
+                    const valorInvestido = a.precoCompra * a.quantidade;
+                    const valorAtual = a.precoAtual * a.quantidade;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                <td class="asset-name">
+                    <div class="d-flex align-items-center">
+                        <div class="asset-icon">
+                            <i class="${a.sigla === 'FIIS' ? 'fas fa-building' :
+                            (a.sigla === 'CRIPT') ? 'fa-solid fa-bitcoin-sign' :
+                                (a.sigla === 'RFIXA') ? 'fa-solid fa-money-bill' :
+                                    'fa-solid fa-chart-line'}"></i>
+                        </div>
+                        <div>${a.nome}<span class="asset-sigla">${a.sigla}</span></div>
+                    </div>
+                </td>
+                <td class="asset-value">${mostrarValores ? formatarMoeda(valorInvestido) : '••••••'}</td>
+                <td class="asset-value ${valorAtual >= valorInvestido ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(valorAtual) : '••••••'}</td>
                 <td><span class="asset-platform">${a.plataforma}</span></td>
-                <td class="asset-value ${current >= a.precoCompra * a.quantidade ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(current) : '••••••'}</td>
-                <td><div class="progress"><div class="progress-bar" role="progressbar" style="width:${a.porcentagem}%; height: 100%" aria-valuenow="${a.porcentagem}" aria-valuemin="0" aria-valuemax="100">${a.porcentagem.toFixed(2)}</div></div></td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width:${a.porcentagem}%; height: 100%" 
+                             aria-valuenow="${a.porcentagem}" aria-valuemin="0" aria-valuemax="100">
+                             ${a.porcentagem.toFixed(2)}%
+                        </div>
+                    </div>
+                </td>
             `;
-                tbody.appendChild(tr);
-            });
+                    tbody.appendChild(tr);
+                });
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             carregarDados(mesAtualIndex);
-            criarGraficoEvolucao();
+            criarGraficoLinhaEvolucaoPatrimonial();
+            criarGraficoLinhaEvolucaoRendimentos();
             document.getElementById('prevMonth').addEventListener('click', () => { if (mesAtualIndex > 0) carregarDados(--mesAtualIndex); });
             document.getElementById('nextMonth').addEventListener('click', () => { if (mesAtualIndex < dadosBrutos.length - 1) carregarDados(++mesAtualIndex); });
-            document.getElementById('mostrarValores').addEventListener('change', e => { mostrarValores = e.target.checked; carregarDados(mesAtualIndex); });
+            document.getElementById('mostrarValores').addEventListener('change', e => {
+                mostrarValores = e.target.checked;
+                carregarDados(mesAtualIndex);
+            });
             document.getElementById('pesquisaAtivo').addEventListener('input', filtrarAtivos);
             document.getElementById('filtrarTipo').addEventListener('change', filtrarAtivos);
-            document.getElementById('darkModeToggle').addEventListener('click', function () { document.body.classList.toggle('dark-mode'); const icon = this.querySelector('i'); icon.classList.toggle('fa-moon'); icon.classList.toggle('fa-sun'); });
         });
     </script>
 </body>
