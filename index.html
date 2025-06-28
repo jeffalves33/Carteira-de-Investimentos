@@ -1,556 +1,192 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carteira de Investimentos</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #3a5a97;
-            --secondary-color: #f8f9fa;
-            --accent-color: #ffc107;
-            --text-color: #333;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-        }
+    <title>Meu Dashboard de Investimentos</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #faf5f9;
-            color: var(--text-color);
-        }
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #2a4171);
-            color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            font-weight: bold;
-        }
-
-        .stats-card {
-            text-align: center;
-            padding: 12px;
-        }
-
-        .stats-value {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .positive {
-            color: var(--success-color);
-        }
-
-        .negative {
-            color: var(--danger-color);
-        }
-
-        .table th {
-            background-color: rgba(58, 90, 151, 0.1);
-        }
-
-        .asset-icon {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-right: 10px;
-            background-color: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .asset-name {
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
-
-        .asset-sigla {
-            font-size: 0.8rem;
-            color: #6c757d;
-            display: block;
-        }
-
-        .progress-bar {
-            height: 8px;
-            border-radius: 4px;
-        }
-
-        .chart-container {
-            height: 300px;
-            width: 100%;
-        }
-
-        .chart-wrapper {
-            padding: 10px;
-        }
-
-        .month-navigator {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .month-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .month-btn:disabled {
-            color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .asset-platform {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            background-color: #e9ecef;
-        }
-
-        .filters {
-            padding: 15px;
-            margin-bottom: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="header animate__animated animate__fadeIn">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <h1><i class="fas fa-chart-line me-2"></i>Carteira de Investimentos</h1>
-                    <p class="lead mb-0">Acompanhe seus investimentos e rendimentos.</p>
-                </div>
+    <div class="main-container">
+        <div class="content-wrapper">
+            <!-- Header Profile Section -->
+            <div class="profile-section">
+                <img src="profile.jpg"
+                    alt="Profile" class="profile-img">
+                <div class="username">@jeff.alvesl</div>
+                <button class="follow-btn">
+                    <i class="bi bi-person-plus me-2"></i>Seguir
+                </button>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card animate__animated animate__fadeInLeft">
-                    <div class="card-header"><i class="fas fa-wallet me-2"></i>Resumo</div>
-                    <div class="card-body">
-                        <div class="month-navigator">
-                            <button class="month-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-                            <h5 id="currentMonth">Carregando...</h5>
-                            <button class="month-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
-                        </div>
-                        <div class="stats-card">
-                            <span>Rendimento do Mês</span>
-                            <div class="stats-value" id="rendimentoMes">-</div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-5 stats-card">
-                                <span>Total Investido</span>
-                                <div class="stats-value" id="totalInvestido">R$ 0,00</div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="summary-card">
+                            <div class="summary-icon patrimonio">
+                                <i class="bi bi-wallet2"></i>
                             </div>
-                            <div class="col-5 stats-card">
-                                <span>Atual</span>
-                                <div class="stats-value" id="totalInvestidoAtual">R$ 0,00</div>
-                            </div>
-                            <div class="col-2 stats-card">
-                                <span>Ativos</span>
-                                <div class="stats-value" id="totalAtivos">0</div>
+                            <div class="summary-label">Patrimônio</div>
+                            <div class="summary-value" id="patrimonioTotal">R$ 0,00</div>
+                            <div class="summary-change" id="patrimonioChange">
+                                <i class="bi bi-arrow-up"></i>
+                                Calculando...
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card animate__animated animate__fadeInLeft" style="animation-delay:0.2s">
-                    <div class="card-header"><i class="fas fa-chart-pie me-2"></i>Distribuição Atual</div>
-                    <div class="card-body chart-wrapper">
-                        <div class="chart-container"><canvas id="distribuicaoAtualGrafico"></canvas></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card animate__animated animate__fadeInLeft" style="animation-delay:0.2s">
-                    <div class="card-header"><i class="fas fa-chart-pie me-2"></i>Distribuição Ideal</div>
-                    <div class="card-body chart-wrapper">
-                        <div class="chart-container"><canvas id="distribuicaoIdealGrafico"></canvas></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card animate__animated animate__fadeInRight">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-table me-2"></i>Detalhes dos Ativos</span>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="mostrarValores">
-                            <label class="form-check-label" for="mostrarValores">Mostrar Valores</label>
+                    <div class="col-md-4">
+                        <div class="summary-card">
+                            <div class="summary-icon rendimento">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <div class="summary-label">Rendimento</div>
+                            <div class="summary-value" id="rendimentoTotal">R$ 0,00</div>
+                            <div class="summary-change" id="rendimentoChange">
+                                <i class="bi bi-arrow-down"></i>
+                                Calculando...
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="filters">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group"><span class="input-group-text"><i
-                                                class="fas fa-search"></i></span><input type="text" class="form-control"
-                                            id="pesquisaAtivo" placeholder="Buscar ativo..."></div>
+                    <div class="col-md-4">
+                        <div class="summary-card">
+                            <div class="summary-icon ativos">
+                                <i class="bi bi-collection"></i>
+                            </div>
+                            <div class="summary-label">Ativos</div>
+                            <div class="summary-value" id="totalAtivos">0</div>
+                            <div class="summary-change" id="ativosChange">
+                                <i class="bi bi-plus"></i>
+                                Calculando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <div class="chart-controls">
+                    <div class="control-group">
+                        <button class="control-btn active" onclick="toggleChartType('patrimonio')" id="patrimonioBtn">
+                            <i class="bi bi-wallet2 me-1"></i>patrimônio
+                        </button>
+                        <button class="control-btn" onclick="toggleChartType('rendimentos')" id="rendimentosBtn">
+                            <i class="bi bi-graph-up me-1"></i>rendimentos
+                        </button>
+                    </div>
+                    <div class="control-group">
+                        <button class="control-btn active" onclick="toggleTimeframe('mes')" id="mesBtn">
+                            <i class="bi bi-calendar-month me-1"></i>mês
+                        </button>
+                        <!--<button class="control-btn" onclick="toggleTimeframe('semana')" id="semanaBtn">
+                            <i class="bi bi-calendar-week me-1"></i>semana 
+                        </button>-->
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Assets List -->
+            <div class="assets-section">
+                <div class="assets-header">
+                    <i class="bi bi-list-ul"></i>
+                    Lista de ativos (<span id="ativosCount">0</span> ativos)
+                </div>
+                <div class="assets-content" id="assetsContainer">
+                    <!-- Assets will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Distribution Chart -->
+            <div class="distribution-section">
+                <div class="distribution-header">
+                    <i class="bi bi-pie-chart"></i>
+                    Distribuição de Portfólio
+                </div>
+                <div class="distribution-content">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Monthly Breakdown -->
+            <div class="monthly-section">
+                <div class="monthly-header">
+                    <span>
+                        <i class="bi bi-calendar-event me-2"></i>
+                        Repartição Mensal
+                    </span>
+                    <select class="form-select w-auto" id="monthSelect" onchange="updateMonthlyData()">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="monthly-content">
+                    <div class="row">
+                        <div class="col-md-3 col-6">
+                            <div class="monthly-card">
+                                <div class="monthly-icon" style="background: var(--gradient-info);">
+                                    <i class="bi bi-plus-circle"></i>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group"><span class="input-group-text">Filtrar por</span><select
-                                            class="form-select" id="filtrarTipo">
-                                            <option value="todos">Todos os tipos</option>
-                                            <option value="Ação">Ações</option>
-                                            <option value="CRIPT">Cripto</option>
-                                            <option value="DOLAR">Dolar</option>
-                                            <option value="FIIS">FIIs</option>
-                                            <option value="RFIXA">Renda Fixa</option>
-                                        </select></div>
+                                <div class="monthly-label">Total investido</div>
+                                <div class="monthly-value" style="color: var(--primary-blue);" id="totalInvestido">R$ 0
                                 </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Ativo</th>
-                                        <th>Valor Compra</th>
-                                        <th>Valor Atual</th>
-                                        <th>Plataforma</th>
-                                        <th>Distribuição</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabelaInvestimentos">
-                                    <tr>
-                                        <td colspan="5" class="text-center">Carregando dados...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="col-md-3 col-6">
+                            <div class="monthly-card">
+                                <div class="monthly-icon" style="background: var(--gradient-success);"
+                                    id="ganhouPerdeuIcon">
+                                    <i class="bi bi-graph-up"></i>
+                                </div>
+                                <div class="monthly-label">Ganhou/Perdeu</div>
+                                <div class="monthly-value profit" id="ganhouPerdeu">R$ 0</div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="card animate__animated animate__fadeInRight" style="animation-delay:0.3s">
-                    <div class="card-header"><i class="fas fa-chart-line me-2"></i>Evolução Patrimonial</div>
-                    <div class="card-body chart-wrapper">
-                        <div class="chart-container"><canvas id="evolucaoGraficoPatrimonial"></canvas></div>
-                    </div>
-                </div>
-                <div class="card animate__animated animate__fadeInRight" style="animation-delay:0.3s">
-                    <div class="card-header"><i class="fas fa-chart-line me-2"></i>Evolução Rendimentos</div>
-                    <div class="card-body chart-wrapper">
-                        <div class="chart-container"><canvas id="evolucaoGraficoRendimentos"></canvas></div>
+                        <div class="col-md-3 col-6">
+                            <div class="monthly-card">
+                                <div class="monthly-icon"
+                                    style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);">
+                                    <i class="bi bi-trophy"></i>
+                                </div>
+                                <div class="monthly-label">Melhor desempenho</div>
+                                <div class="monthly-value" style="color: var(--neutral-800);" id="melhorDesempenho">-
+                                </div>
+                                <div class="monthly-subtitle profit" id="melhorPercentual">0%</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="monthly-card">
+                                <div class="monthly-icon"
+                                    style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                </div>
+                                <div class="monthly-label">Transações</div>
+                                <div class="monthly-value" style="color: #0891b2;" id="transacoes">0</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mt-4 text-center text-muted"><small>Atualizado automaticamente. Última atualização: <span
-                    id="ultimaAtualizacao"></span></small></div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script>
-        const dadosBrutos = [
-            {
-                mes: "Junho",
-                investimento: 440.28,
-                acoes: [
-                    { nome: "BBAS3F", sigla: "Ação", plataforma: "Rico", precoCompra: 21.80, precoAtual: 21.73, quantidade: 1 },
-                    { nome: "BTHF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 8.57, precoAtual: 8.66, quantidade: 3 },
-                    { nome: "BTC", sigla: "CRIPT", plataforma: "Binance", precoCompra: 50, precoAtual: 47.56, quantidade: 1 },
-                    { nome: "CDBINTER", sigla: "RFIXA", plataforma: "Inter", precoCompra: 102.11, precoAtual: 102.30, quantidade: 1 },
-                    { nome: "HFOF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 6.02, precoAtual: 5.78, quantidade: 2 },
-                    { nome: "IPCA40+6,99", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 48.85, precoAtual: 48.45, quantidade: 1 },
-                    { nome: "IPCA50+6,98", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 57.91, precoAtual: 58.00, quantidade: 1 },
-                    { nome: "SAPR4F", sigla: "Ação", plataforma: "Rico", precoCompra: 6.60, precoAtual: 7.50, quantidade: 3 },
-                    { nome: "XPML11", sigla: "FIIS", plataforma: "Rico", precoCompra: 101.86, precoAtual: 103.20, quantidade: 1 },
-                ]
-            }
-        ];
-        let mesAtualIndex = dadosBrutos.length - 1;
-        let mostrarValores = false;
-        let graficoDistribuicaoAtual, graficoDistribuicaoIdeal, graficoEvolucaoPatrimonial, graficoEvolucaoRendimentos;
-        const coresPorSigla = {
-            'Ação': '#3a5a97',
-            'FIIS': '#28a745',
-            'CRIPT': '#ffc107',
-            'RFIXA': '#dc3545',
-            'DOLAR': '#2aded5'
-        };
-        function formatarMoeda(v) {
-            return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
 
-        function formatarPercentual(v) {
-            return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-        }
-
-        function criarGraficoPizzaDistribuicaoAtual(idx) {
-            const mes = dadosBrutos[idx];
-            const ctx = document.getElementById('distribuicaoAtualGrafico').getContext('2d');
-
-            // Agrupar por sigla
-            const agrupadoPorSigla = mes.acoes.reduce((acc, acao) => {
-                const valorAtual = acao.precoAtual * acao.quantidade;
-                if (!acc[acao.sigla]) {
-                    acc[acao.sigla] = { valor: 0, porcentagem: 0 };
-                }
-                acc[acao.sigla].valor += valorAtual;
-                return acc;
-            }, {});
-
-            // Calcular total para porcentagens
-            const valorTotal = Object.values(agrupadoPorSigla).reduce((sum, item) => sum + item.valor, 0);
-
-            // Calcular porcentagens
-            Object.keys(agrupadoPorSigla).forEach(sigla => {
-                agrupadoPorSigla[sigla].porcentagem = (agrupadoPorSigla[sigla].valor / valorTotal) * 100;
-            });
-
-            const labels = Object.keys(agrupadoPorSigla);
-            const data = Object.values(agrupadoPorSigla).map(item => item.porcentagem);
-            const colors = labels.map(sigla => coresPorSigla[sigla] || '#6c757d');
-
-            if (graficoDistribuicaoAtual) graficoDistribuicaoAtual.destroy();
-            graficoDistribuicaoAtual = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 1 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-            });
-        }
-
-        function criarGraficoPizzaDistribuicaoIdeal(idx) {
-            const mes = dadosBrutos[idx];
-            const ctx = document.getElementById('distribuicaoIdealGrafico').getContext('2d');
-            const labels = ['Ação', 'FIIS', 'CRIPT', 'DOLAR', 'RFIXA'];
-            const data = [35, 25, 10, 20, 10];
-            const colors = labels.map(sigla => coresPorSigla[sigla] || '#6c757d');
-
-            if (graficoDistribuicaoIdeal) graficoDistribuicaoIdeal.destroy();
-            graficoDistribuicaoIdeal = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 1 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-            });
-        }
-
-        function criarGraficoLinhaEvolucaoPatrimonial() {
-            const ctx = document.getElementById('evolucaoGraficoPatrimonial').getContext('2d');
-            const labels = dadosBrutos.map(d => d.mes);
-            const values = dadosBrutos.map(d => d.acoes.reduce((sum, a) => sum + a.precoAtual * a.quantidade, 0));
-
-            if (graficoEvolucaoPatrimonial) graficoEvolucaoPatrimonial.destroy();
-            graficoEvolucaoPatrimonial = new Chart(ctx, {
-                type: 'line',
-                data: { labels, datasets: [{ label: 'Patrimônio Atual', data: values, fill: true, tension: 0.3 }] },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => formatarMoeda(v) }
-                        }
-                    }
-                }
-            });
-        }
-
-        function criarGraficoLinhaEvolucaoRendimentos() {
-            const ctx = document.getElementById('evolucaoGraficoRendimentos').getContext('2d');
-            const labels = dadosBrutos.map(d => d.mes);
-            const values = dadosBrutos.map(d => {
-                const totalInvestido = d.acoes.reduce((sum, a) => sum + a.precoCompra * a.quantidade, 0);
-                const totalAtual = d.acoes.reduce((sum, a) => sum + a.precoAtual * a.quantidade, 0);
-                return totalAtual - totalInvestido; // Rendimento real (lucro/prejuízo)
-            });
-
-            // Determinar cor baseada no valor total acumulado
-            const totalRendimento = values[values.length - 1]; // Último valor (mais atual)
-            const cor = totalRendimento >= 0 ? '#28a745' : '#dc3545'; // Verde se positivo, vermelho se negativo
-
-            if (graficoEvolucaoRendimentos) graficoEvolucaoRendimentos.destroy();
-            graficoEvolucaoRendimentos = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Rendimento Real',
-                        data: values,
-                        borderColor: cor,
-                        backgroundColor: cor + '20', // Cor com transparência para o preenchimento
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => formatarMoeda(v) }
-                        }
-                    }
-                }
-            });
-        }
-
-        function carregarDados(idx) {
-            const mes = dadosBrutos[idx];
-            document.getElementById('prevMonth').disabled = idx === 0;
-            document.getElementById('nextMonth').disabled = idx === dadosBrutos.length - 1;
-            document.getElementById('currentMonth').textContent = mes.mes;
-
-            // Corrigir o cálculo do total investido
-            const totalInvestido = mes.acoes.reduce((total, acao) => total + (acao.precoCompra * acao.quantidade), 0);
-            const totalAtual = mes.acoes.reduce((sum, a) => sum + a.precoAtual * a.quantidade, 0);
-
-            // Calcular porcentagem de cada ação em relação ao patrimônio total atual
-            mes.acoes.forEach(acao => {
-                acao.porcentagem = ((acao.precoAtual * acao.quantidade) / totalAtual) * 100;
-            });
-
-            const rendimento = totalInvestido > 0 ? ((totalAtual - totalInvestido) / totalInvestido) * 100 : 0;
-
-            const rendEl = document.getElementById('rendimentoMes');
-            rendEl.textContent = formatarPercentual(rendimento);
-            rendEl.className = 'stats-value ' + (rendimento >= 0 ? 'positive' : 'negative');
-
-            document.getElementById('totalInvestido').textContent = formatarMoeda(totalInvestido);
-            document.getElementById('totalInvestidoAtual').textContent = formatarMoeda(totalAtual);
-            document.getElementById('totalAtivos').textContent = mes.acoes.length;
-
-            const tbody = document.getElementById('tabelaInvestimentos');
-            tbody.innerHTML = '';
-
-            mes.acoes.forEach(a => {
-                const valorInvestido = a.precoCompra * a.quantidade;
-                const valorAtual = a.precoAtual * a.quantidade;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                <td class="asset-name">
-                    <div class="d-flex align-items-center">
-                        <div class="asset-icon">
-                            <i class="${a.sigla === 'FIIS' ? 'fas fa-building' :
-                            (a.sigla === 'CRIPT') ? 'fa-solid fa-bitcoin-sign' :
-                                (a.sigla === 'RFIXA') ? 'fa-solid fa-money-bill' :
-                                    'fa-solid fa-chart-line'}"></i>
-                        </div>
-                        <div>${a.nome}<span class="asset-sigla">${a.sigla}</span></div>
-                    </div>
-                </td>
-                <td class="asset-value">${mostrarValores ? formatarMoeda(valorInvestido) : '••••••'}</td>
-                <td class="asset-value ${valorAtual >= valorInvestido ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(valorAtual) : '••••••'}</td>
-                <td><span class="asset-platform">${a.plataforma}</span></td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:${a.porcentagem}%; height: 100%" 
-                            aria-valuenow="${a.porcentagem}" aria-valuemin="0" aria-valuemax="100">
-                            ${a.porcentagem.toFixed(2)}%
-                        </div>
-                    </div>
-                </td>
-            `;
-                tbody.appendChild(tr);
-            });
-
-            criarGraficoPizzaDistribuicaoAtual(idx);
-            criarGraficoPizzaDistribuicaoIdeal(idx);
-            document.getElementById('ultimaAtualizacao').textContent = new Date().toLocaleString('pt-BR');
-        }
-
-        function filtrarAtivos() {
-            const termo = document.getElementById('pesquisaAtivo').value.toLowerCase();
-            const tipo = document.getElementById('filtrarTipo').value;
-            const mes = dadosBrutos[mesAtualIndex];
-            const tbody = document.getElementById('tabelaInvestimentos');
-            tbody.innerHTML = '';
-
-            const lista = mes.acoes.filter(a =>
-                a.nome.toLowerCase().includes(termo) &&
-                (tipo === 'todos' || a.sigla === tipo)
-            );
-
-            if (lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum ativo encontrado</td></tr>';
-            } else {
-                lista.forEach(a => {
-                    const valorInvestido = a.precoCompra * a.quantidade;
-                    const valorAtual = a.precoAtual * a.quantidade;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                <td class="asset-name">
-                    <div class="d-flex align-items-center">
-                        <div class="asset-icon">
-                            <i class="${a.sigla === 'FIIS' ? 'fas fa-building' :
-                            (a.sigla === 'CRIPT') ? 'fa-solid fa-bitcoin-sign' :
-                                (a.sigla === 'RFIXA') ? 'fa-solid fa-money-bill' :
-                                    'fa-solid fa-chart-line'}"></i>
-                        </div>
-                        <div>${a.nome}<span class="asset-sigla">${a.sigla}</span></div>
-                    </div>
-                </td>
-                <td class="asset-value">${mostrarValores ? formatarMoeda(valorInvestido) : '••••••'}</td>
-                <td class="asset-value ${valorAtual >= valorInvestido ? 'positive' : 'negative'}">${mostrarValores ? formatarMoeda(valorAtual) : '••••••'}</td>
-                <td><span class="asset-platform">${a.plataforma}</span></td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:${a.porcentagem}%; height: 100%" 
-                             aria-valuenow="${a.porcentagem}" aria-valuemin="0" aria-valuemax="100">
-                             ${a.porcentagem.toFixed(2)}%
-                        </div>
-                    </div>
-                </td>
-            `;
-                    tbody.appendChild(tr);
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            carregarDados(mesAtualIndex);
-            criarGraficoLinhaEvolucaoPatrimonial();
-            criarGraficoLinhaEvolucaoRendimentos();
-            document.getElementById('prevMonth').addEventListener('click', () => { if (mesAtualIndex > 0) carregarDados(--mesAtualIndex); });
-            document.getElementById('nextMonth').addEventListener('click', () => { if (mesAtualIndex < dadosBrutos.length - 1) carregarDados(++mesAtualIndex); });
-            document.getElementById('mostrarValores').addEventListener('change', e => {
-                mostrarValores = e.target.checked;
-                carregarDados(mesAtualIndex);
-            });
-            document.getElementById('pesquisaAtivo').addEventListener('input', filtrarAtivos);
-            document.getElementById('filtrarTipo').addEventListener('change', filtrarAtivos);
-        });
-    </script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
