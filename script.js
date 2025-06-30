@@ -14,15 +14,15 @@ const dadosBrutos = [
         mes: "Junho",
         investimento: 440.28,
         acoes: [
-            { nome: "BBAS3F", sigla: "Ação", plataforma: "Rico", precoCompra: 21.80, precoAtual: 21.73, quantidade: 1 },
-            { nome: "BTHF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 8.57, precoAtual: 8.66, quantidade: 3 },
-            { nome: "BTC", sigla: "CRIPT", plataforma: "Binance", precoCompra: 50, precoAtual: 47.56, quantidade: 1 },
+            { nome: "BBAS3F", sigla: "Ação", plataforma: "Rico", precoCompra: 21.80, precoAtual: 22.09, quantidade: 1 },
+            { nome: "BTHF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 8.57, precoAtual: 8.78, quantidade: 3 },
+            { nome: "BTC", sigla: "CRIPT", plataforma: "Binance", precoCompra: 50, precoAtual: 47.27, quantidade: 1 },
             { nome: "CDBINTER", sigla: "RFIXA", plataforma: "Inter", precoCompra: 102.11, precoAtual: 102.30, quantidade: 1 },
-            { nome: "HFOF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 6.02, precoAtual: 5.78, quantidade: 2 },
-            { nome: "IPCA40+6,99", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 48.85, precoAtual: 48.45, quantidade: 1 },
-            { nome: "IPCA50+6,98", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 57.91, precoAtual: 58.00, quantidade: 1 },
-            { nome: "SAPR4F", sigla: "Ação", plataforma: "Rico", precoCompra: 6.60, precoAtual: 7.50, quantidade: 3 },
-            { nome: "XPML11", sigla: "FIIS", plataforma: "Rico", precoCompra: 101.86, precoAtual: 103.20, quantidade: 1 },
+            { nome: "HFOF11", sigla: "FIIS", plataforma: "Rico", precoCompra: 6.02, precoAtual: 5.95, quantidade: 2 },
+            { nome: "IPCA40+6,99", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 48.85, precoAtual: 48.88, quantidade: 1 },
+            { nome: "IPCA50+6,98", sigla: "RFIXA", plataforma: "Tesouro Direto", precoCompra: 57.91, precoAtual: 59.80, quantidade: 1 },
+            { nome: "SAPR4F", sigla: "Ação", plataforma: "Rico", precoCompra: 6.60, precoAtual: 7.55, quantidade: 3 },
+            { nome: "XPML11", sigla: "FIIS", plataforma: "Rico", precoCompra: 101.86, precoAtual: 104.15, quantidade: 1 },
         ]
     },
 ];
