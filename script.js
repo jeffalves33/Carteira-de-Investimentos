@@ -61,7 +61,7 @@ const dadosBrutos = [
             { nome: "XPML11", sigla: "FIIS", plataforma: "Rico", precoMedio: 101.86, precoAtual: 104.00, quantidade: 1, dividendo: 0 }
         ]
     }
-    
+
 ];
 
 // Funções para calcular valores baseados nas posições
@@ -453,28 +453,47 @@ function initMainChart() {
 // Função para inicializar gráfico de distribuição
 function initDistributionChart() {
     const ctx = document.getElementById('distributionChart').getContext('2d');
-    const data = obterDistribuicaoPortfolio();
+
+    const dadosAtuais = obterDistribuicaoPortfolio();
+    const dadosIdeais = [30, 20, 20, 10, 20];
 
     distributionChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: data.labels,
-            datasets: [{
-                data: data.data,
-                backgroundColor: [
-                    '#3b82f6',
-                    '#10b981',
-                    '#6b7280',
-                    '#f59e0b',
-                    '#8b5cf6'
-                ],
-                borderWidth: 0,
-                hoverOffset: 15
-            }]
+            labels: dadosAtuais.labels,
+            datasets: [
+                {
+                    label: 'Distribuição Atual',
+                    data: dadosAtuais.data,
+                    backgroundColor: [
+                        '#3b82f6', // Ações
+                        '#10b981', // FIIs
+                        '#6b7280', // Renda Fixa
+                        '#f59e0b', // Crypto
+                        '#8b5cf6'  // Exterior
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                },
+                {
+                    label: 'Distribuição Ideal',
+                    data: dadosIdeais,
+                    backgroundColor: [
+                        '#3b83f6ee', // Cor semitransparente
+                        '#10b981ee',
+                        '#6b7280ee',
+                        '#f59e0bee',
+                        '#8b5cf6ee'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 0
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: '65%',
             plugins: {
                 legend: {
                     position: 'bottom',
@@ -495,12 +514,11 @@ function initDistributionChart() {
                     cornerRadius: 8,
                     callbacks: {
                         label: function (context) {
-                            return context.label + ': ' + context.parsed + '%';
+                            return context.dataset.label + ' - ' + context.label + ': ' + context.parsed + '%';
                         }
                     }
                 }
-            },
-            cutout: '65%'
+            }
         }
     });
 }
